@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTracker Pro - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body class="dashboard-body">
+
+    <div id="app-wrapper">
+        <aside class="sidebar">
+            <div class="logo"><span class="material-symbols-outlined">fitness_center</span> FitTracker</div>
+            <nav id="main-nav">
+                <a href="#" data-target="view-dashboard" class="active"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
+                <a href="#" data-target="view-history"><span class="material-symbols-outlined">history</span> Histórico</a>
+                <a href="#" data-target="view-goals"><span class="material-symbols-outlined">flag</span> Metas</a>
+                <a href="#" data-target="view-training"><span class="material-symbols-outlined">fitness_center</span> Treino</a>
+                <a href="#" data-target="view-diet"><span class="material-symbols-outlined">restaurant</span> Dieta</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-icon"><span class="material-symbols-outlined">logout</span> Sair</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header>
+                <div>
+                    <h1 id="user-greeting">Olá, Atleta</h1>
+                    <p class="subtitle" id="header-subtitle">Acompanhe seu progresso diário.</p>
+                </div>
+            </header>
+
+            <!-- ================= VIEW: DASHBOARD ================= -->
+            <div id="view-dashboard" class="view-section active">
+                <section class="summary-cards">
+                    <div class="card">
+                        <h3>Peso Atual</h3>
+                        <p class="value" id="current-weight">-- kg</p>
+                    </div>
+                    <div class="card">
+                        <h3>Peso Perdido</h3>
+                        <p class="value highlight" id="total-lost">-- kg</p>
+                    </div>
+                    <div class="card" id="goal-card">
+                        <h3 style="display:flex; justify-content:space-between; align-items: center;">Progresso da Meta</h3>
+                        <p class="value" id="goal-weight-dash">-- kg</p>
+                        <div class="progress-track">
+                            <div id="goal-progress-bar" class="progress-fill" style="width: 0%; background: var(--success);"></div>
+                        </div>
+                        <small id="goal-message" style="display: block; margin-top: 8px; color: var(--text-muted);">Defina sua meta na aba Metas.</small>
+                    </div>
+                </section>
+
+                <section class="action-chart-grid">
+                    <div class="card form-card">
+                        <h3 id="form-title"><span class="material-symbols-outlined">add_circle</span> Novo Registro</h3>
+                        <form id="weight-form">
+                            <input type="hidden" id="edit-id" value="">
+                            <input type="date" id="weight-date" required>
+                            <input type="number" step="0.1" id="weight-value" placeholder="Peso (kg)" required>
+                            <textarea id="weight-notes" placeholder="Observações (ex: jejum, pós-treino...)" rows="2"></textarea>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <button type="submit" id="submit-weight-btn" class="btn-primary" style="margin-top: 0;">Salvar Evolução</button>
+                                <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card chart-container">
+                        <h3>Curva de Progresso</h3>
+                        <div class="canvas-wrapper">
+                            <canvas id="evolutionChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ================= VIEW: HISTÓRICO ================= -->
+            <div id="view-history" class="view-section">
+                <section class="card" style="overflow-x: auto;">
+                    <h3><span class="material-symbols-outlined">history</span> Histórico Completo de Pesagens</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Peso</th>
+                                <th>Variação</th>
+                                <th>Observações</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body"></tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- ================= VIEW: METAS ================= -->
+            <div id="view-goals" class="view-section">
+                <section class="action-chart-grid">
+                    <div class="card form-card">
+                        <h3><span class="material-symbols-outlined">flag</span> Definir Objetivo</h3>
+                        <div style="margin-top: 1rem;">
+                            <label style="color: var(--text-muted); font-size: 0.9rem;">Peso Alvo (kg)</label>
+                            <input type="number" step="0.1" id="goal-input" placeholder="Ex: 80.0" style="margin-top: 0.5rem;">
+                            <button id="save-goal-btn" class="btn-primary">Atualizar Meta</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ================= VIEW: TREINO (DINÂMICO COMPLETO) ================= -->
+            <div id="view-training" class="view-section">
+                <div class="days-nav" id="workout-days-nav">
+                    <button class="day-btn" data-day="Segunda">Segunda</button>
+                    <button class="day-btn" data-day="Terça">Terça</button>
+                    <button class="day-btn" data-day="Quarta">Quarta</button>
+                    <button class="day-btn" data-day="Quinta">Quinta</button>
+                    <button class="day-btn" data-day="Sexta">Sexta</button>
+                    <button class="day-btn" data-day="Sábado">Sábado</button>
+                    <button class="day-btn" data-day="Domingo">Domingo</button>
+                </div>
+
+                <section class="action-chart-grid" style="grid-template-columns: 1fr; margin-top: 1.5rem;">
+                    <div class="card form-card">
+                        <h3 style="display:flex; justify-content:space-between; flex-wrap: wrap; gap: 10px;">
+                            <span><span class="material-symbols-outlined">fitness_center</span> Adicionar ao Treino de <span id="label-current-day" style="color: var(--primary);">Segunda</span></span>
+                            <button id="reset-day-btn" class="btn-icon" style="color: var(--warning); font-size: 0.9rem;"><span class="material-symbols-outlined">refresh</span> Zerar Treino do Dia</button>
+                        </h3>
+                        <!-- Formulário atualizado com os dados iniciais completos -->
+                        <form id="workout-form" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                            <input type="text" id="exercise-name" placeholder="Exercício (ex: Supino)" required style="flex: 1; min-width: 200px;">
+                            <input type="number" id="exercise-sets" placeholder="Qtd. Séries" required style="width: 100px;">
+                            <input type="number" id="exercise-reps" placeholder="Reps" required style="width: 100px;">
+                            <input type="number" step="0.5" id="exercise-weight" placeholder="Carga (kg)" required style="width: 110px;">
+                            <button type="submit" id="add-exercise-btn" class="btn-primary" style="width: auto; padding: 0 1.5rem; margin-top: 0;">Adicionar</button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="card" style="margin-top: 1.5rem;">
+                    <div class="exercise-list" id="workout-list">
+                        <!-- Preenchido via Firebase -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- ================= VIEW: DIETA ================= -->
+           <div id="view-diet" class="view-section">
+                <section class="summary-cards">
+                    <div class="card">
+                        <h3><span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">local_fire_department</span> Progresso Calórico</h3>
+                        <p class="value"><span id="cal-consumed">0</span> / <span id="cals-target-display">--</span> kcal</p>
+                        <div class="progress-track">
+                            <div id="cal-progress" class="progress-fill" style="width: 0%; background: var(--warning);"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3><span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">egg_alt</span> Meta de Proteína</h3>
+                        <p class="value"><span id="protein-consumed">0</span> / <span id="protein-target-display">--</span> g</p>
+                        <div class="progress-track">
+                            <div id="protein-progress" class="progress-fill" style="width: 0%; background: var(--secondary);"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card" style="margin-top: 1.5rem;">
+                    <h3><span class="material-symbols-outlined">restaurant</span> Plano Alimentar Prescrito</h3>
+                    <p class="text-muted" style="margin-bottom: 1.5rem;">Marque os alimentos consumidos para atualizar seu progresso diário.</p>
+                    
+                    <div id="student-diet-list">
+                        <p class="text-muted">Aguardando prescrição do nutricionista...</p>
+                        </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script type="module" src="../js/firebase-config.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
+    <script type="module" src="../js/charts.js"></script>
+</body>
+</html>

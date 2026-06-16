@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTracker Pro - Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body class="auth-body">
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <span class="material-symbols-outlined logo-icon">fitness_center</span>
+            <h2>FitTracker Pro</h2>
+            <p>Seu compromisso diário.</p>
+        </div>
+        
+       <form id="auth-form">
+            <div id="register-fields" style="display: none;">
+                <div class="input-group">
+                    <span class="material-symbols-outlined">person</span>
+                    <input type="text" id="first-name" placeholder="Nome">
+                </div>
+                <div class="input-group">
+                    <span class="material-symbols-outlined">badge</span>
+                    <input type="text" id="last-name" placeholder="Sobrenome">
+                </div>
+                <div class="input-group" style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="is-nutri" style="width: auto;">
+                    <label for="is-nutri" style="color: var(--text-muted); cursor: pointer;">Sou Profissional (Nutricionista/Trainer)</label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <span class="material-symbols-outlined">mail</span>
+                <input type="email" id="email" placeholder="E-mail" required>
+            </div>
+            
+            <div class="input-group">
+                <span class="material-symbols-outlined">lock</span>
+                <input type="password" id="password" placeholder="Senha" required>
+            </div>
+
+            <div class="input-group" id="confirm-password-group" style="display: none;">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <input type="password" id="confirm-password" placeholder="Confirmar Senha">
+            </div>
+
+            <button type="submit" id="auth-btn" class="btn-primary">Entrar</button>
+        </form>
+        
+        <p id="toggle-auth" class="toggle-link">Não tem uma conta? <strong>Cadastre-se</strong></p>
+    </div>
+
+    <script type="module" src="../js/firebase-config.js"></script>
+    <script type="module" src="../js/auth.js"></script>
+</body>
+</html>
