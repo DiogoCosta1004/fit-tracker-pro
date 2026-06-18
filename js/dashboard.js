@@ -369,4 +369,6 @@ window.editRecord = (id, date, weight, notes) => {
 window.deleteRecord = async (id) => { if(confirm('Deseja excluir este registro?')) { await deleteDoc(doc(db, `users/${auth.currentUser.uid}/pesagens`, id)); showToast("Registro excluído.", "primary"); } };
 cancelEditBtn?.addEventListener('click', resetForm);
 function resetForm() { weightForm.reset(); editIdInput.value = ''; formTitle.innerHTML = '<span class="material-symbols-outlined">add_circle</span> Novo Registro'; submitBtn.textContent = 'Salvar Evolução'; cancelEditBtn.style.display = 'none'; document.getElementById('weight-date').valueAsDate = new Date(); }
+// Substitua o código de logout do seu dashboard.js por este:
 document.getElementById('logout-btn')?.addEventListener('click', () => signOut(auth));
+document.getElementById('mobile-logout-btn')?.addEventListener('click', () => signOut(auth));

@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitTracker Pro - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../css/style.css">
@@ -14,10 +14,18 @@
         <aside class="sidebar">
             <div class="logo"><span class="material-symbols-outlined">fitness_center</span> FitTracker</div>
             <nav id="main-nav">
-                <a href="#" data-target="view-dashboard" class="active"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
-                <a href="#" data-target="view-history"><span class="material-symbols-outlined">history</span> Histórico</a>
-                <a href="#" data-target="view-goals"><span class="material-symbols-outlined">flag</span> Metas</a>
-                <a href="#" data-target="view-training"><span class="material-symbols-outlined">fitness_center</span> Treino</a>
+                <a href="#" data-target="view-dashboard" class="active">
+                    <span class="material-symbols-outlined">dashboard</span> <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" data-target="view-history">
+                    <span class="material-symbols-outlined">history</span> <span class="nav-text">Histórico</span>
+                </a>
+                <a href="#" data-target="view-goals">
+                    <span class="material-symbols-outlined">flag</span> <span class="nav-text">Metas</span>
+                </a>
+                <a href="#" data-target="view-training">
+                    <span class="material-symbols-outlined">fitness_center</span> <span class="nav-text">Treino</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <button id="logout-btn" class="btn-icon"><span class="material-symbols-outlined">logout</span> Sair</button>
@@ -25,11 +33,14 @@
         </aside>
 
         <main class="content">
-            <header>
+            <header class="header-top">
                 <div>
                     <h1 id="user-greeting">Olá, Atleta</h1>
                     <p class="subtitle" id="header-subtitle">Acompanhe seu progresso diário.</p>
                 </div>
+                <button id="mobile-logout-btn" class="mobile-logout btn-icon" style="color: var(--primary);">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
             </header>
 
             <div id="view-dashboard" class="view-section active">
@@ -78,7 +89,7 @@
 
             <div id="view-history" class="view-section">
                 <section class="card" style="overflow-x: auto;">
-                    <h3><span class="material-symbols-outlined">history</span> Histórico Completo de Pesagens</h3>
+                    <h3 style="white-space: nowrap;"><span class="material-symbols-outlined">history</span> Histórico Completo de Pesagens</h3>
                     <table class="history-table">
                         <thead>
                             <tr>
@@ -121,12 +132,12 @@
                 <section class="action-chart-grid" style="grid-template-columns: 1fr; margin-top: 1.5rem;">
                     <div class="card form-card">
                         <h3 style="display:flex; justify-content:space-between; flex-wrap: wrap; gap: 10px;">
-                            <span><span class="material-symbols-outlined">fitness_center</span> Adicionar ao Treino de <span id="label-current-day" style="color: var(--primary);">Segunda</span></span>
-                            <button id="reset-day-btn" class="btn-icon" style="color: var(--warning); font-size: 0.9rem;"><span class="material-symbols-outlined">refresh</span> Zerar Treino do Dia</button>
+                            <span><span class="material-symbols-outlined">fitness_center</span> Adicionar Treino <span id="label-current-day" style="color: var(--primary);">Segunda</span></span>
+                            <button id="reset-day-btn" class="btn-icon" style="color: var(--warning); font-size: 0.9rem;"><span class="material-symbols-outlined">refresh</span> Zerar Dia</button>
                         </h3>
                         <form id="workout-form" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
                             <input type="text" id="exercise-name" placeholder="Exercício (ex: Supino)" required style="flex: 1; min-width: 200px;">
-                            <input type="number" id="exercise-sets" placeholder="Qtd. Séries" required style="width: 100px;">
+                            <input type="number" id="exercise-sets" placeholder="Séries" required style="width: 100px;">
                             <input type="number" id="exercise-reps" placeholder="Reps" required style="width: 100px;">
                             <input type="number" step="0.5" id="exercise-weight" placeholder="Carga (kg)" required style="width: 110px;">
                             <button type="submit" id="add-exercise-btn" class="btn-primary" style="width: auto; padding: 0 1.5rem; margin-top: 0;">Adicionar</button>
@@ -136,7 +147,7 @@
 
                 <section class="card" style="margin-top: 1.5rem;">
                     <div class="exercise-list" id="workout-list">
-                        </div>
+                    </div>
                 </section>
             </div>
         </main>
