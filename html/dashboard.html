@@ -18,7 +18,6 @@
                 <a href="#" data-target="view-history"><span class="material-symbols-outlined">history</span> Histórico</a>
                 <a href="#" data-target="view-goals"><span class="material-symbols-outlined">flag</span> Metas</a>
                 <a href="#" data-target="view-training"><span class="material-symbols-outlined">fitness_center</span> Treino</a>
-                <a href="#" data-target="view-diet"><span class="material-symbols-outlined">restaurant</span> Dieta</a>
             </nav>
             <div class="sidebar-footer">
                 <button id="logout-btn" class="btn-icon"><span class="material-symbols-outlined">logout</span> Sair</button>
@@ -33,7 +32,6 @@
                 </div>
             </header>
 
-            <!-- ================= VIEW: DASHBOARD ================= -->
             <div id="view-dashboard" class="view-section active">
                 <section class="summary-cards">
                     <div class="card">
@@ -78,7 +76,6 @@
                 </section>
             </div>
 
-            <!-- ================= VIEW: HISTÓRICO ================= -->
             <div id="view-history" class="view-section">
                 <section class="card" style="overflow-x: auto;">
                     <h3><span class="material-symbols-outlined">history</span> Histórico Completo de Pesagens</h3>
@@ -97,7 +94,6 @@
                 </section>
             </div>
 
-            <!-- ================= VIEW: METAS ================= -->
             <div id="view-goals" class="view-section">
                 <section class="action-chart-grid">
                     <div class="card form-card">
@@ -111,7 +107,6 @@
                 </section>
             </div>
 
-            <!-- ================= VIEW: TREINO (DINÂMICO COMPLETO) ================= -->
             <div id="view-training" class="view-section">
                 <div class="days-nav" id="workout-days-nav">
                     <button class="day-btn" data-day="Segunda">Segunda</button>
@@ -129,7 +124,6 @@
                             <span><span class="material-symbols-outlined">fitness_center</span> Adicionar ao Treino de <span id="label-current-day" style="color: var(--primary);">Segunda</span></span>
                             <button id="reset-day-btn" class="btn-icon" style="color: var(--warning); font-size: 0.9rem;"><span class="material-symbols-outlined">refresh</span> Zerar Treino do Dia</button>
                         </h3>
-                        <!-- Formulário atualizado com os dados iniciais completos -->
                         <form id="workout-form" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
                             <input type="text" id="exercise-name" placeholder="Exercício (ex: Supino)" required style="flex: 1; min-width: 200px;">
                             <input type="number" id="exercise-sets" placeholder="Qtd. Séries" required style="width: 100px;">
@@ -142,36 +136,6 @@
 
                 <section class="card" style="margin-top: 1.5rem;">
                     <div class="exercise-list" id="workout-list">
-                        <!-- Preenchido via Firebase -->
-                    </div>
-                </section>
-            </div>
-
-            <!-- ================= VIEW: DIETA ================= -->
-           <div id="view-diet" class="view-section">
-                <section class="summary-cards">
-                    <div class="card">
-                        <h3><span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">local_fire_department</span> Progresso Calórico</h3>
-                        <p class="value"><span id="cal-consumed">0</span> / <span id="cals-target-display">--</span> kcal</p>
-                        <div class="progress-track">
-                            <div id="cal-progress" class="progress-fill" style="width: 0%; background: var(--warning);"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3><span class="material-symbols-outlined" style="font-size: 1.2rem; vertical-align: middle;">egg_alt</span> Meta de Proteína</h3>
-                        <p class="value"><span id="protein-consumed">0</span> / <span id="protein-target-display">--</span> g</p>
-                        <div class="progress-track">
-                            <div id="protein-progress" class="progress-fill" style="width: 0%; background: var(--secondary);"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="card" style="margin-top: 1.5rem;">
-                    <h3><span class="material-symbols-outlined">restaurant</span> Plano Alimentar Prescrito</h3>
-                    <p class="text-muted" style="margin-bottom: 1.5rem;">Marque os alimentos consumidos para atualizar seu progresso diário.</p>
-                    
-                    <div id="student-diet-list">
-                        <p class="text-muted">Aguardando prescrição do nutricionista...</p>
                         </div>
                 </section>
             </div>

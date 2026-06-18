@@ -21,7 +21,6 @@ navLinks.forEach(link => {
         if(targetId === 'view-history') subtitle.textContent = "Seu banco de dados de evolução.";
         if(targetId === 'view-goals') subtitle.textContent = "Defina onde você quer chegar.";
         if(targetId === 'view-training') subtitle.textContent = "Gerencie seus blocos de treino e progressões.";
-        if(targetId === 'view-diet') subtitle.textContent = "Controle rígido dos macros.";
     });
 });
 
@@ -32,7 +31,6 @@ const submitBtn = document.getElementById('submit-weight-btn');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
 const formTitle = document.getElementById('form-title');
 
-const userHeight = 1.87; 
 let globalWeights = []; 
 let userGoalWeight = null; 
 
@@ -45,7 +43,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Substitua a loadUserProfile existente por esta:
 async function loadUserProfile(uid) {
     const userDoc = await getDoc(doc(db, "users", uid));
     if (userDoc.exists()) {
@@ -57,16 +54,6 @@ async function loadUserProfile(uid) {
             document.getElementById('goal-weight-dash').textContent = `${userGoalWeight} kg`;
             document.getElementById('goal-input').value = userGoalWeight;
         }
-
-        // NOVO: Carrega as metas enviadas pelo Nutri
-        window.targetCals = userData.targetCals || 2000;
-        window.targetProtein = userData.targetProtein || 150;
-        
-        document.getElementById('cals-target-display').textContent = window.targetCals;
-        document.getElementById('protein-target-display').textContent = window.targetProtein;
-        
-        // Dispara o carregamento da dieta
-        loadStudentDiet(uid);
     }
 }
 
@@ -224,7 +211,6 @@ if (workoutForm) {
         btn.disabled = true; 
         btn.textContent = 'Adicionando...';
 
-        // Gera a matriz (array) de séries com base no input do usuário
         let initialSets = [];
         for(let i = 0; i < numSets; i++) {
             initialSets.push({ reps: reps, weight: weight, done: false });
@@ -235,7 +221,7 @@ if (workoutForm) {
                 dayOfWeek: currentActiveDay,
                 name: name,
                 sets: initialSets,
-                createdAt: Date.now() // Usando timestamp numérico para evitar erros de índice no Firestore
+                createdAt: Date.now() 
             });
             showToast(`Exercício adicionado!`);
             workoutForm.reset();
@@ -252,8 +238,6 @@ if (workoutForm) {
 function loadWorkoutsForDay(userId, day) {
     if (unsubscribeWorkout) unsubscribeWorkout();
     
-    // Removida a ordenação via banco de dados para evitar o erro de Índice Ausente.
-    // Ordenaremos no JavaScript via "createdAt".
     const q = query(collection(db, `users/${userId}/treinos`), where("dayOfWeek", "==", day));
 
     unsubscribeWorkout = onSnapshot(q, (snapshot) => {
@@ -269,7 +253,6 @@ function loadWorkoutsForDay(userId, day) {
         let exercises = [];
         snapshot.forEach(doc => exercises.push({ id: doc.id, ...doc.data() }));
         
-        // Ordenação garantida sem erro de banco de dados
         exercises.sort((a, b) => a.createdAt - b.createdAt);
 
         exercises.forEach((w) => {
@@ -303,7 +286,6 @@ function loadWorkoutsForDay(userId, day) {
     });
 }
 
-// Atualização de Séries (Executada no evento onchange direto no HTML)
 window.updateSetData = async (exerciseId, setIndex, field, value) => {
     try {
         const docRef = doc(db, `users/${auth.currentUser.uid}/treinos`, exerciseId);
@@ -350,7 +332,6 @@ window.deleteExercise = async (id) => {
     }
 };
 
-// Resetar Dia (Desmarca os checks para você malhar na outra semana)
 document.getElementById('reset-day-btn')?.addEventListener('click', async () => {
     if(!confirm(`Deseja desmarcar todos os exercícios de ${currentActiveDay} para iniciar um novo treino?`)) return;
     
@@ -364,94 +345,6 @@ document.getElementById('reset-day-btn')?.addEventListener('click', async () => 
     });
     showToast(`Treino de ${currentActiveDay} zerado! Bora pra cima!`);
 });
-
-// ================== DIETA DO ALUNO (SOMENTE LEITURA & CHECK) ==================
-let unsubscribeDiet = null;
-
-function loadStudentDiet(userId) {
-    if (unsubscribeDiet) unsubscribeDiet();
-    
-    const q = query(collection(db, `users/${userId}/dieta_prescrita`), orderBy("timestamp", "asc"));
-    
-    unsubscribeDiet = onSnapshot(q, (snapshot) => {
-        const listEl = document.getElementById('student-diet-list');
-        if(!listEl) return;
-        
-        listEl.innerHTML = '';
-
-        if(snapshot.empty) {
-            listEl.innerHTML = '<p class="text-muted">Seu plano alimentar ainda não foi liberado pelo nutricionista.</p>';
-            return;
-        }
-
-        const dietGroups = {};
-        snapshot.forEach(docSnap => {
-            const food = docSnap.data();
-            if(!dietGroups[food.mealType]) dietGroups[food.mealType] = [];
-            dietGroups[food.mealType].push({ id: docSnap.id, ...food });
-        });
-
-        const order = ["Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar", "Ceia"];
-        
-        order.forEach(meal => {
-            if(dietGroups[meal]) {
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'exercise-item'; // Aproveitando o CSS do treino que é excelente
-                
-                let itemsHtml = dietGroups[meal].map(f => `
-                    <div class="set-row" style="margin-top: 0.5rem;">
-                        <div style="flex: 1;">
-                            <strong style="color: var(--text-main);">${f.weight}g - ${f.name}</strong>
-                            <small style="display: block; color: var(--text-muted);">${f.cals} kcal | Prot: ${f.protein}g</small>
-                        </div>
-                        <input type="checkbox" class="set-check diet-check" data-cals="${f.cals}" data-protein="${f.protein}">
-                    </div>
-                `).join('');
-
-                groupDiv.innerHTML = `
-                    <h4 style="color: var(--secondary); margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">${meal}</h4>
-                    <div class="sets-container">${itemsHtml}</div>
-                `;
-                listEl.appendChild(groupDiv);
-            }
-        });
-
-        // Adiciona os eventos nos checkboxes para calcular o progresso
-        document.querySelectorAll('.diet-check').forEach(box => {
-            box.addEventListener('change', calculateDietProgress);
-        });
-        
-        // Zera os marcadores ao carregar a nova dieta
-        calculateDietProgress();
-    });
-}
-
-function calculateDietProgress() {
-    let consumedCals = 0;
-    let consumedProtein = 0;
-
-    document.querySelectorAll('.diet-check:checked').forEach(box => {
-        consumedCals += parseInt(box.getAttribute('data-cals')) || 0;
-        consumedProtein += parseFloat(box.getAttribute('data-protein')) || 0;
-    });
-
-    document.getElementById('cal-consumed').textContent = consumedCals;
-    document.getElementById('protein-consumed').textContent = consumedProtein.toFixed(1);
-
-    // Barras de Progresso
-    let calPct = (consumedCals / window.targetCals) * 100;
-    let protPct = (consumedProtein / window.targetProtein) * 100;
-
-    const calBar = document.getElementById('cal-progress');
-    const protBar = document.getElementById('protein-progress');
-
-    calBar.style.width = `${calPct > 100 ? 100 : calPct}%`;
-    protBar.style.width = `${protPct > 100 ? 100 : protPct}%`;
-
-    // Avisos visuais
-    calBar.style.background = consumedCals > window.targetCals ? "var(--primary)" : "var(--warning)";
-    protBar.style.background = consumedProtein >= window.targetProtein ? "var(--success)" : "var(--secondary)";
-}
 
 // ================== UTILITÁRIOS GLOBAIS ==================
 function showToast(message, type = "success") {

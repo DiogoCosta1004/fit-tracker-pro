@@ -26,14 +26,6 @@ if (toggleAuthBtn) {
     toggleAuthBtn.addEventListener('click', toggleView);
 }
 
-// Lógica de Leitura da URL (O Link Mágico do Nutri)
-window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('action') === 'register' && isLogin) {
-        toggleView(); // Vira a tela automaticamente para cadastro
-    }
-});
-
 if (authForm) {
     authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -51,17 +43,14 @@ if (authForm) {
                 const confirmPassword = document.getElementById('confirm-password').value;
                 const firstName = document.getElementById('first-name').value;
                 const lastName = document.getElementById('last-name').value;
-                const isNutri = document.getElementById('is-nutri').checked;
 
                 if (password !== confirmPassword) throw new Error("As senhas não coincidem.");
 
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                const role = isNutri ? 'nutri' : 'aluno';
-
                 await setDoc(doc(db, "users", user.uid), {
-                    firstName, lastName, email, role, goalWeight: null
+                    firstName, lastName, email, goalWeight: null
                 });
 
                 alert("Conta criada com sucesso!");
@@ -85,14 +74,10 @@ onAuthStateChanged(auth, async (user) => {
 
     if (user) {
         if (currentPage.includes('login.html') || currentPage.endsWith('/html/')) {
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (userDoc.exists()) {
-                const role = userDoc.data().role;
-                window.location.href = role === 'nutri' ? 'nutri-dashboard.html' : 'dashboard.html';
-            }
+            window.location.href = 'dashboard.html';
         }
     } else {
-        if (currentPage.includes('dashboard.html') || currentPage.includes('nutri-dashboard.html')) {
+        if (currentPage.includes('dashboard.html')) {
             window.location.href = 'login.html';
         }
     }
